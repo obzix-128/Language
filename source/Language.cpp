@@ -1,119 +1,55 @@
 #include "Language.h"
+#include "RecursiveDescent.h"
+#include "LexicalAnalysis.h"
 
-const char* S = "(2*(4+5)/3)*6$";
-int         P = 0;
 
-
-int main(void)
+int main(const int argc, const char** argv)
 {
-    int value = GetG();
-    printf("value = %d\n", value);
-
-    return 0;
-}
-
-int GetG(void)
-{
-    int value = GetE();
-    if(S[P] != '$')
+    const int _NUMBERS_OF_ARGUMENTS = 3;
+    if(argc != _NUMBERS_OF_ARGUMENTS)
     {
-        SyntaxError();
+        errorHandler(NUMBER_OF_ARG_ERROR, __PRETTY_FUNCTION__);
+        return NUMBER_OF_ARG_ERROR;
     }
 
-    P++;
-    return value;
-}
+    ErrorNumbers check_error = NO_ERROR;
 
-int SyntaxError(void)
-{
-    assert(0);
+    FILE* log_file = NULL;
+    CHECK_ERROR(check_error, openFile(&log_file, argv[1], OPEN_FILE_IN_RECORDING_MODE));
+    fprintf(log_file, "<pre>\n");
 
-    return 0;
-}
+    BufferInfo program = {};
 
-int GetN(void)
-{
-    int value = 0;
-    int starting_position = P;
+    CHECK_ERROR(check_error, readFile(argv[2], &(program.buffer)));
 
-    while('0' <= S[P] && S[P] <= '9')
+    TokensInfo  array_of_tokens = {};
+    IdTableInfo table           = {};
+
+    CHECK_ERROR(check_error, lexicalAnalysis(log_file, &program, &array_of_tokens, &table));
+
+    for(int i = 0; i < array_of_tokens.size; i++)
     {
-        value = value * 10 + S[P] - '0';
-        P++;
+        CHECK_ERROR(check_error, treeDump(log_file, &(array_of_tokens.address[i]),
+                                          __PRETTY_FUNCTION__, NULL               ));
     }
 
-    if(P == starting_position)
+    ReturnValue value = recursiveDescent(&array_of_tokens);
+    if(value.error != NO_ERROR)
     {
-        SyntaxError();
+        errorHandler(value.error, __PRETTY_FUNCTION__);
+        return value.error;
     }
 
-    return value;
-}
+    CHECK_ERROR(check_error, treeDump(log_file, value.node, __PRETTY_FUNCTION__, NULL));
 
-int GetE(void)
-{
-    int value = GetT();
+    CHECK_ERROR(check_error, treeDtor(log_file, value.node));
 
-    while(S[P] == '+' || S[P] == '-')
-    {
-        int op = S[P];
-        P++;
+    free(program.buffer);
+    free(array_of_tokens.address);
+    free(table.cell);
+    fclose(log_file);
 
-        int value_two = GetT();
-        if(op == '+')
-        {
-            value += value_two;
-        }
-        else
-        {
-            value -= value_two;
-        }
-    }
+    printf("DONE\n");
 
-    return value;
-}
-
-int GetT(void)
-{
-    int value = GetP();
-
-    while(S[P] == '*' || S[P] == '/')
-    {
-        int op = S[P];
-        P++;
-
-        int value_two = GetP();
-        if(op == '*')
-        {
-            value = value * value_two;
-        }
-        else
-        {
-            value = value / value_two;
-        }
-    }
-
-    return value;
-}
-
-int GetP(void)
-{
-    if(S[P] == '(')
-    {
-        P++;
-        int value = GetE();
-
-        if(S[P] != ')')
-        {
-            SyntaxError();
-        }
-
-        P++;
-
-        return value;
-    }
-    else
-    {
-        return GetN();
-    }
+    return check_error;
 }

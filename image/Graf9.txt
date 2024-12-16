@@ -1,0 +1,17 @@
+digraph
+{
+rankdir = TB;
+{
+_00D50D20[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D50D20 | type = VAR | value = z | lenght = 1 | number = 0 | { left = NULL | right = NULL }} "]
+_00D50D60[shape = record, style = "filled" fillcolor = "#bbffff", label = " { address = 00D50D60 | type = NUM | value = 5.00 | { left = NULL | right = NULL }} "]
+_00D50DA0[shape = record, style = "filled" fillcolor = "#bbffff", label = " { address = 00D50DA0 | type = NUM | value = 6.00 | { left = NULL | right = NULL }} "]
+_00D50D80[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D50D80 | type = OP | value = ^ | { <_l_00D50D60> left = 00D50D60 | <_r_00D50DA0> right = 00D50DA0 }} "]
+_00D50D80:<_l_00D50D60>->_00D50D60
+_00D50D80:<_r_00D50DA0>->_00D50DA0
+_00D50D40[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D50D40 | type = OP | value = + | { <_l_00D50D20> left = 00D50D20 | <_r_00D50D80> right = 00D50D80 }} "]
+_00D50D40:<_l_00D50D20>->_00D50D20
+_00D50D40:<_r_00D50D80>->_00D50D80
+_00D50CE0[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D50CE0 | type = OP | value = cos | { <_l_00D50D40> left = 00D50D40 | right = NULL }} "]
+_00D50CE0:<_l_00D50D40>->_00D50D40
+}
+}

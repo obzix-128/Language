@@ -1,0 +1,7 @@
+digraph
+{
+rankdir = TB;
+{
+_00D50D20[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D50D20 | type = VAR | value = z | lenght = 1 | number = 0 | { left = NULL | right = NULL }} "]
+}
+}
