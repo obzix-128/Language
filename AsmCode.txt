@@ -1,0 +1,34 @@
+
+; begining of assignment
+push 1
+pop [0] ; x
+; begining of assignment
+; EOP
+
+; begining of assignment
+push 34
+pop [1] ; y
+; begining of assignment
+; EOP
+
+; begining of assignment
+push [0] ; x
+push [1] ; y
+add
+push 15
+push 2
+pow
+mul
+pop [2] ; abc
+; begining of assignment
+; EOP
+
+; begining of printf
+push [2] ; abc
+push 7
+add
+out
+; end of printf
+; EOP
+
+hlt

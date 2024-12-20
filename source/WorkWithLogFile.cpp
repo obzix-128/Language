@@ -83,7 +83,7 @@ ErrorNumbers treeDump(FILE* log_file, Node* root, const char* func_name, Node* n
     }
     else if(root->type == ID)
     {
-        fprintf(log_file, "type = VAR | value = ");
+        fprintf(log_file, "type = ID | value = ");
         for(int i = 0; i < root->value.id_info.length; i++)
         {
             fprintf(log_file, "%c", root->value.id_info.id[i]);
@@ -224,7 +224,7 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
         }
         case ID:
         {
-            fprintf(file_to_write, "type = VAR | value = ");
+            fprintf(file_to_write, "type = ID | value = ");
             for(int i = 0; i < node->value.id_info.length; i++)
             {
                 fprintf(file_to_write, "%c", node->value.id_info.id[i]);
@@ -242,57 +242,62 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
             {
                 case ADD:
                 {
-                    fprintf(file_to_write, "value = + | ");
+                    fprintf(file_to_write, "value = '+' | ");
                     break;
                 }
                 case SUB:
                 {
-                    fprintf(file_to_write, "value = - | ");
+                    fprintf(file_to_write, "value = '-' | ");
                     break;
                 }
                 case MUL:
                 {
-                    fprintf(file_to_write, "value = * | ");
+                    fprintf(file_to_write, "value = '*' | ");
                     break;
                 }
                 case DIV:
                 {
-                    fprintf(file_to_write, "value = / | ");
+                    fprintf(file_to_write, "value = '/' | ");
                     break;
                 }
                 case POW:
                 {
-                    fprintf(file_to_write, "value = ^ | ");
+                    fprintf(file_to_write, "value = '^' | ");
                     break;
                 }
                 case COS:
                 {
-                    fprintf(file_to_write, "value = cos | ");
+                    fprintf(file_to_write, "value = 'cos' | ");
+                    break;
+                }
+                case PRINTF:
+                {
+                    fprintf(file_to_write, "value = 'printf' | ");
                     break;
                 }
                 case L_SK:
                 {
-                    fprintf(file_to_write, "value = ( | ");
+                    fprintf(file_to_write, "value = '(' | ");
                     break;
                 }
                 case R_SK:
                 {
-                    fprintf(file_to_write, "value = ) | ");
+                    fprintf(file_to_write, "value = ')' | ");
                     break;
                 }
                 case EQUAL:
                 {
-                    fprintf(file_to_write, "value = = | ");
+                    fprintf(file_to_write, "value = '=' | ");
                     break;
                 }
                 case EOP:
                 {
-                    fprintf(file_to_write, "value = ; | ");
+                    fprintf(file_to_write, "value = ';' | ");
                     break;
                 }
                 case END:
                 {
-                    fprintf(file_to_write, "value = $ | ");
+                    fprintf(file_to_write, "value = '$' | ");
                     break;
                 }
                 case POISON:

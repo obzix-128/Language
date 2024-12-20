@@ -27,31 +27,37 @@ ReturnValue getOperation(TokensInfo* array_of_tokens, int* pointer)
     CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
     CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
 
-    ReturnValue value         = {};
-    ReturnValue assignment    = {};
-    ReturnValue next_operator = {};
+    ReturnValue value    = {};
+    ReturnValue l_branch = {};
 
-    if(*pointer < array_of_tokens->size - 1)
+    CHECK_RETURN_VALUE(l_branch, getAssignment(array_of_tokens, pointer));
+    if(l_branch.node == NULL)
     {
-        CHECK_RETURN_VALUE(assignment, getAssignment(array_of_tokens, pointer));
-
-        if(array_of_tokens->address[*pointer].value.operation == ';')
+        CHECK_RETURN_VALUE(l_branch, getFuncWithOneArg(array_of_tokens, pointer));
+        if(l_branch.node == NULL)
         {
-            value.node = &(array_of_tokens->address[*pointer]);
-            (*pointer)++;
-
-            CHECK_RETURN_VALUE(next_operator, getOperation(array_of_tokens, pointer));
-
-            value.node->left  = assignment.node;
-            value.node->right = next_operator.node;
-        }
-        else
-        {
-            fprintf(stderr, "the ';' character was expected, but the '%c' character was received\n",
-                    array_of_tokens->address[*pointer].value.operation                               );
-            value.error = SYNTAX_ERROR;
             return value;
         }
+    }
+
+    ReturnValue r_branch = {};
+
+    if(array_of_tokens->address[*pointer].value.operation == ';')
+    {
+        value.node = &(array_of_tokens->address[*pointer]);
+        (*pointer)++;
+
+        CHECK_RETURN_VALUE(r_branch, getOperation(array_of_tokens, pointer));
+
+        value.node->left  = l_branch.node;
+        value.node->right = r_branch.node;
+    }
+    else
+    {
+        fprintf(stderr, "the ';' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
+        value.error = SYNTAX_ERROR;
+        return value;
     }
 
     return value;
@@ -66,7 +72,13 @@ ReturnValue getAssignment(TokensInfo* array_of_tokens, int* pointer)
 
     ReturnValue l_value = {};
     ReturnValue r_value = {};
+
     CHECK_RETURN_VALUE(l_value, getVariable(array_of_tokens, pointer));
+
+    if(l_value.node == NULL)
+    {
+        return result;
+    }
 
     if(array_of_tokens->address[*pointer].type == OP &&
        array_of_tokens->address[*pointer].value.operation == '=')
@@ -80,12 +92,9 @@ ReturnValue getAssignment(TokensInfo* array_of_tokens, int* pointer)
     }
     else
     {
-        fprintf(stderr, "the '=' character was expected, but the '%c' character was received\n",
-                array_of_tokens->address[*pointer].value.operation                               );
-        result.error = SYNTAX_ERROR;
+        (*pointer) -= 1;
         return result;
     }
-
 
     return result;
 }
@@ -195,28 +204,35 @@ ReturnValue getPrimaryExpression(TokensInfo* array_of_tokens, int* pointer)
     }
     else
     {
-        CHECK_RETURN_VALUE(value, getVariable(array_of_tokens, pointer));
-        if(value.node != NULL)
+        switch(array_of_tokens->address[*pointer].type)
         {
-            return value;
-        }
-
-        CHECK_RETURN_VALUE(value, getNumeral(array_of_tokens, pointer));
-        if(value.node != NULL)
-        {
-            return value;
-        }
-
-        CHECK_RETURN_VALUE(value, getFuncWithOneArg(array_of_tokens, pointer));
-        if(value.node != NULL)
-        {
-            return value;
-        }
-
-        if(value.node == NULL)
-        {
-            value.error = SYNTAX_ERROR;
-            return value;
+            case NUM:
+            {
+                CHECK_RETURN_VALUE(value, getNumeral(array_of_tokens, pointer));
+                break;
+            }
+            case ID:
+            {
+                CHECK_RETURN_VALUE(value, getVariable(array_of_tokens, pointer));
+                break;
+            }
+            case OP:
+            {
+                CHECK_RETURN_VALUE(value, getFuncWithOneArg(array_of_tokens, pointer));
+                break;
+            }
+            case POISON_TYPE:
+            {
+                value.error = SYNTAX_ERROR;
+                return value;
+                break;
+            }
+            default:
+            {
+                value.error = SYNTAX_ERROR;
+                return value;
+                break;
+            }
         }
     }
 
@@ -229,15 +245,14 @@ ReturnValue getFuncWithOneArg(TokensInfo* array_of_tokens, int* pointer)
     CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
 
     ReturnValue value = {};
-    value.node = &(array_of_tokens->address[*pointer]);
 
-    if(array_of_tokens->address[*pointer].type != OP ||
-       array_of_tokens->address[*pointer].value.operation != COS)
+    if(array_of_tokens->address[*pointer].value.operation != COS &&
+       array_of_tokens->address[*pointer].value.operation != PRINTF)
     {
-        value.error = SYNTAX_ERROR;
         return value;
     }
 
+    value.node = &(array_of_tokens->address[*pointer]);
     (*pointer)++;
 
     if(array_of_tokens->address[*pointer].type != OP ||
@@ -274,11 +289,13 @@ ReturnValue getVariable(TokensInfo* array_of_tokens, int* pointer)
 
     ReturnValue value = {};
 
-    if(array_of_tokens->address[*pointer].type == ID)
+    if(array_of_tokens->address[*pointer].type != ID)
     {
-        value.node = &(array_of_tokens->address[*pointer]);
-        (*pointer)++;
+        return value;
     }
+
+    value.node = &(array_of_tokens->address[*pointer]);
+    (*pointer)++;
 
     return value;
 }
@@ -290,11 +307,8 @@ ReturnValue getNumeral(TokensInfo* array_of_tokens, int* pointer)
 
     ReturnValue value = {};
 
-    if(array_of_tokens->address[*pointer].type == NUM)
-    {
-        value.node = &(array_of_tokens->address[*pointer]);
-        (*pointer)++;
-    }
+    value.node = &(array_of_tokens->address[*pointer]);
+    (*pointer)++;
 
     return value;
 }

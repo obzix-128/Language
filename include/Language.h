@@ -31,6 +31,7 @@ enum Operations
     L_SK   = '(',
     R_SK   = ')',
     EQUAL  = '=',
+    PRINTF = 'p',
     EOP    = ';',
     END    = '$'
 };
@@ -38,9 +39,9 @@ enum Operations
 enum NodeType
 {
     POISON_TYPE = 0,
-    NUM = 1,
-    ID = 2,
-    OP  = 3
+    NUM         = 1,
+    ID          = 2,
+    OP          = 3
 };
 
 struct IdInfo

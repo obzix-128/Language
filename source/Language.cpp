@@ -1,11 +1,12 @@
 #include "Language.h"
 #include "RecursiveDescent.h"
 #include "LexicalAnalysis.h"
+#include "WriteAssemblerCode.h"
 
 
 int main(const int argc, const char** argv)
 {
-    const int _NUMBERS_OF_ARGUMENTS = 3;
+    const int _NUMBERS_OF_ARGUMENTS = 4;
     if(argc != _NUMBERS_OF_ARGUMENTS)
     {
         errorHandler(NUMBER_OF_ARG_ERROR, __PRETTY_FUNCTION__);
@@ -36,12 +37,19 @@ int main(const int argc, const char** argv)
 
     CHECK_ERROR(check_error, treeDump(log_file, value.node, __PRETTY_FUNCTION__, NULL));
 
+    FILE* asm_code_file = NULL;
+    CHECK_ERROR(check_error, openFile(&asm_code_file, argv[3], OPEN_FILE_IN_RECORDING_MODE));
+
+    CHECK_ERROR(check_error, writeAssemblerCode(log_file, asm_code_file, value.node));
+
     CHECK_ERROR(check_error, treeDtor(log_file, value.node));
 
-    free(program.buffer);
+    free(program.buffer         );
     free(array_of_tokens.address);
-    free(table.cell);
-    fclose(log_file);
+    free(table.cell             );
+
+    fclose(asm_code_file);
+    fclose(log_file     );
 
     printf("DONE\n");
 
