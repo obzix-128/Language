@@ -12,7 +12,7 @@ pop [1] ; y
 ; EOP
 
 ; begining of assignment
-push [0] ; x
+push [3] ; z
 push [1] ; y
 add
 push 15
@@ -23,6 +23,13 @@ pop [2] ; abc
 ; begining of assignment
 ; EOP
 
+; begining of if
+push [0] ; x
+push 1
+sub
+push 0
+je end_if:
+
 ; begining of printf
 push [2] ; abc
 push 7
@@ -30,5 +37,7 @@ add
 out
 ; end of printf
 ; EOP
-
+end_if:
+; end of if
+; EOP
 hlt

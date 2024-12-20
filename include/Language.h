@@ -30,8 +30,11 @@ enum Operations
     COS    = 'c',
     L_SK   = '(',
     R_SK   = ')',
+    LF_SK  = '{',
+    RF_SK  = '}',
     EQUAL  = '=',
     PRINTF = 'p',
+    IF     = 'i',
     EOP    = ';',
     END    = '$'
 };

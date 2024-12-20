@@ -275,6 +275,11 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
                     fprintf(file_to_write, "value = 'printf' | ");
                     break;
                 }
+                case IF:
+                {
+                    fprintf(file_to_write, "value = 'if' | ");
+                    break;
+                }
                 case L_SK:
                 {
                     fprintf(file_to_write, "value = '(' | ");
@@ -283,6 +288,16 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
                 case R_SK:
                 {
                     fprintf(file_to_write, "value = ')' | ");
+                    break;
+                }
+                case LF_SK:
+                {
+                    fprintf(file_to_write, "value = '{' | ");
+                    break;
+                }
+                case RF_SK:
+                {
+                    fprintf(file_to_write, "value = '}' | ");
                     break;
                 }
                 case EQUAL:

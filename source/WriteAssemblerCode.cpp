@@ -125,18 +125,30 @@ ErrorNumbers writeOperation(FILE* log_file, FILE* file_to_write, Node* node)
 
             break;
         }
+        case IF:
+        {
+            fprintf(file_to_write, "\n; begining of if\n");
+
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left));
+
+            fprintf(file_to_write, "push 0\n");
+            fprintf(file_to_write, "je end_if:\n");
+
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
+
+            fprintf(file_to_write, "end_if:\n");
+            fprintf(file_to_write, "; end of if\n");
+
+            break;
+        }
         case EOP:
         {
-            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left ));
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left));
             fprintf(file_to_write, "; EOP\n");
 
             if(node->right != NULL)
             {
                 CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
-            }
-            else
-            {
-                fprintf(file_to_write, "\nhlt\n");
             }
 
             break;
@@ -148,6 +160,18 @@ ErrorNumbers writeOperation(FILE* log_file, FILE* file_to_write, Node* node)
             break;
         }
         case R_SK:
+        {
+            check_error = TYPE_ERROR;
+            return check_error;
+            break;
+        }
+        case LF_SK:
+        {
+            check_error = TYPE_ERROR;
+            return check_error;
+            break;
+        }
+        case RF_SK:
         {
             check_error = TYPE_ERROR;
             return check_error;

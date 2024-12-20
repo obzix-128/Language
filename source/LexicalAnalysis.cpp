@@ -96,6 +96,18 @@ ErrorNumbers findKeyword(FILE* log_file, TokensInfo* array_of_tokens, IdTableInf
                 array_of_tokens->address[i].type            = OP;
                 array_of_tokens->address[i].value.operation = R_SK;
             }
+            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "{", 1)) &&
+                    array_of_tokens->address[i].value.id_info.length == 1                  )
+            {
+                array_of_tokens->address[i].type            = OP;
+                array_of_tokens->address[i].value.operation = LF_SK;
+            }
+            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "}", 1)) &&
+                    array_of_tokens->address[i].value.id_info.length == 1                  )
+            {
+                array_of_tokens->address[i].type            = OP;
+                array_of_tokens->address[i].value.operation = RF_SK;
+            }
             else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "=", 1)) &&
                     array_of_tokens->address[i].value.id_info.length == 1                  )
             {
@@ -107,6 +119,12 @@ ErrorNumbers findKeyword(FILE* log_file, TokensInfo* array_of_tokens, IdTableInf
             {
                 array_of_tokens->address[i].type            = OP;
                 array_of_tokens->address[i].value.operation = PRINTF;
+            }
+            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "if", 2)) &&
+                    array_of_tokens->address[i].value.id_info.length == 2                   )
+            {
+                array_of_tokens->address[i].type            = OP;
+                array_of_tokens->address[i].value.operation = IF;
             }
             else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, ";", 1)) &&
                     array_of_tokens->address[i].value.id_info.length == 1                  )

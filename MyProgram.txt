@@ -1,7 +1,12 @@
 
- x = 1;
+{ x = 1;
  y=  34;
 
- abc = (x + y)*15^2;
+ abc = (z + y)*15^2;
+if(x
 
-printf(abc+7);$
+-1)
+{
+printf(abc+7);
+};
+}$

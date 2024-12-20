@@ -31,36 +31,140 @@ ReturnValue getOperation(TokensInfo* array_of_tokens, int* pointer)
     ReturnValue l_branch = {};
 
     CHECK_RETURN_VALUE(l_branch, getAssignment(array_of_tokens, pointer));
-    if(l_branch.node == NULL)
+    if(l_branch.node != NULL)
     {
-        CHECK_RETURN_VALUE(l_branch, getFuncWithOneArg(array_of_tokens, pointer));
-        if(l_branch.node == NULL)
-        {
-            return value;
-        }
+        CHECK_RETURN_VALUE(value, checkSemicolon(array_of_tokens, pointer));
+
+        value.node->left = l_branch.node;
+        return value;
     }
 
-    ReturnValue r_branch = {};
-
-    if(array_of_tokens->address[*pointer].value.operation == ';')
+    CHECK_RETURN_VALUE(l_branch, getFuncWithOneArg(array_of_tokens, pointer));
+    if(l_branch.node != NULL)
     {
-        value.node = &(array_of_tokens->address[*pointer]);
-        (*pointer)++;
+        CHECK_RETURN_VALUE(value, checkSemicolon(array_of_tokens, pointer));
 
-        CHECK_RETURN_VALUE(r_branch, getOperation(array_of_tokens, pointer));
-
-        value.node->left  = l_branch.node;
-        value.node->right = r_branch.node;
+        value.node->left = l_branch.node;
+        return value;
     }
-    else
+
+    CHECK_RETURN_VALUE(l_branch, getIf(array_of_tokens, pointer));
+    if(l_branch.node != NULL)
     {
-        fprintf(stderr, "the ';' character was expected, but the '%c' character was received\n",
-                array_of_tokens->address[*pointer].value.operation                               );
+        CHECK_RETURN_VALUE(value, checkSemicolon(array_of_tokens, pointer));
+
+        value.node->left = l_branch.node;
+        return value;
+    }
+
+    if(array_of_tokens->address[*pointer].value.operation != '{')
+    {
+        return value;
+    }
+    (*pointer) += 1;
+
+    CHECK_RETURN_VALUE(value, getOperation(array_of_tokens, pointer));
+    if(value.node == NULL)
+    {
+        fprintf(stderr, "No operators detected\n");
         value.error = SYNTAX_ERROR;
         return value;
     }
 
+    ReturnValue old_operation = value;
+    ReturnValue new_operation = {};
+
+    while(old_operation.node != NULL)
+    {
+        CHECK_RETURN_VALUE(new_operation, getOperation(array_of_tokens, pointer));
+
+        old_operation.node->right = new_operation.node;
+        old_operation = new_operation;
+
+        if(*pointer >= array_of_tokens->size)
+        {
+            value.error = SIZE_ERROR;
+            return value;
+        }
+    };
+
+    if(array_of_tokens->address[*pointer].value.operation != '}')
+    {
+        fprintf(stderr, "the '}' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                              );
+        value.error = SYNTAX_ERROR;
+        return value;
+    }
+    (*pointer) += 1;
+
     return value;
+}
+
+ReturnValue checkSemicolon(TokensInfo* array_of_tokens, int* pointer)
+{
+    CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
+
+    ReturnValue value = {};
+
+    if(array_of_tokens->address[*pointer].value.operation != ';')
+    {
+        fprintf(stderr, "the ';' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                              );
+        value.error = SYNTAX_ERROR;
+        return value;
+    }
+
+    value.node = &(array_of_tokens->address[*pointer]);
+    (*pointer)++;
+
+    return value;
+}
+
+ReturnValue getIf(TokensInfo* array_of_tokens, int* pointer)
+{
+    CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
+
+    ReturnValue result = {};
+
+    if(array_of_tokens->address[*pointer].type != OP ||
+       array_of_tokens->address[*pointer].value.operation != 'i')
+    {
+        return result;
+    }
+
+    result.node = &(array_of_tokens->address[*pointer]);
+    (*pointer)++;
+
+    if(array_of_tokens->address[*pointer].type != OP ||
+       array_of_tokens->address[*pointer].value.operation != '(')
+    {
+        fprintf(stderr, "the '(' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
+        result.error = SYNTAX_ERROR;
+        return result;
+    }
+    (*pointer)++;
+
+    ReturnValue condition = getExpression(array_of_tokens, pointer);
+
+    result.node->left = condition.node;
+
+    if(array_of_tokens->address[*pointer].type != OP ||
+       array_of_tokens->address[*pointer].value.operation != ')')
+    {
+        fprintf(stderr, "the ')' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
+        result.error = SYNTAX_ERROR;
+        return result;
+    }
+    (*pointer)++;
+
+    ReturnValue body = getOperation(array_of_tokens, pointer);
+    result.node->right = body.node;
+
+    return result;
 }
 
 ReturnValue getAssignment(TokensInfo* array_of_tokens, int* pointer)
