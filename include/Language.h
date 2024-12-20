@@ -30,7 +30,9 @@ enum Operations
     COS    = 'c',
     L_SK   = '(',
     R_SK   = ')',
-    EOP    = '$'
+    EQUAL  = '=',
+    EOP    = ';',
+    END    = '$'
 };
 
 enum NodeType

@@ -2,6 +2,40 @@ digraph
 {
 rankdir = TB;
 {
-_00D50CE0[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D50CE0 | type = OP | value = cos | { left = NULL | right = NULL }} "]
+_00D13FE0[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D13FE0 | type = VAR | value = x | lenght = 1 | number = 0 | { left = NULL | right = NULL }} "]
+_00D14020[shape = record, style = "filled" fillcolor = "#bbffff", label = " { address = 00D14020 | type = NUM | value = 1 | { left = NULL | right = NULL }} "]
+_00D14000[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14000 | type = OP | value = = | { <_l_00D13FE0> left = 00D13FE0 | <_r_00D14020> right = 00D14020 }} "]
+_00D14000:<_l_00D13FE0>->_00D13FE0
+_00D14000:<_r_00D14020>->_00D14020
+_00D14060[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D14060 | type = VAR | value = y | lenght = 1 | number = 1 | { left = NULL | right = NULL }} "]
+_00D140A0[shape = record, style = "filled" fillcolor = "#bbffff", label = " { address = 00D140A0 | type = NUM | value = 34 | { left = NULL | right = NULL }} "]
+_00D14080[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14080 | type = OP | value = = | { <_l_00D14060> left = 00D14060 | <_r_00D140A0> right = 00D140A0 }} "]
+_00D14080:<_l_00D14060>->_00D14060
+_00D14080:<_r_00D140A0>->_00D140A0
+_00D140E0[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D140E0 | type = VAR | value = abc | lenght = 3 | number = 2 | { left = NULL | right = NULL }} "]
+_00D14120[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D14120 | type = VAR | value = x | lenght = 1 | number = 0 | { left = NULL | right = NULL }} "]
+_00D14160[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00D14160 | type = VAR | value = y | lenght = 1 | number = 1 | { left = NULL | right = NULL }} "]
+_00D141A0[shape = record, style = "filled" fillcolor = "#bbffff", label = " { address = 00D141A0 | type = NUM | value = 15 | { left = NULL | right = NULL }} "]
+_00D141E0[shape = record, style = "filled" fillcolor = "#bbffff", label = " { address = 00D141E0 | type = NUM | value = 2 | { left = NULL | right = NULL }} "]
+_00D141C0[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D141C0 | type = OP | value = ^ | { <_l_00D141A0> left = 00D141A0 | <_r_00D141E0> right = 00D141E0 }} "]
+_00D141C0:<_l_00D141A0>->_00D141A0
+_00D141C0:<_r_00D141E0>->_00D141E0
+_00D14180[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14180 | type = OP | value = * | { <_l_00D14160> left = 00D14160 | <_r_00D141C0> right = 00D141C0 }} "]
+_00D14180:<_l_00D14160>->_00D14160
+_00D14180:<_r_00D141C0>->_00D141C0
+_00D14140[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14140 | type = OP | value = + | { <_l_00D14120> left = 00D14120 | <_r_00D14180> right = 00D14180 }} "]
+_00D14140:<_l_00D14120>->_00D14120
+_00D14140:<_r_00D14180>->_00D14180
+_00D14100[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14100 | type = OP | value = = | { <_l_00D140E0> left = 00D140E0 | <_r_00D14140> right = 00D14140 }} "]
+_00D14100:<_l_00D140E0>->_00D140E0
+_00D14100:<_r_00D14140>->_00D14140
+_00D14200[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14200 | type = OP | value = ; | { <_l_00D14100> left = 00D14100 | right = NULL }} "]
+_00D14200:<_l_00D14100>->_00D14100
+_00D140C0[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D140C0 | type = OP | value = ; | { <_l_00D14080> left = 00D14080 | <_r_00D14200> right = 00D14200 }} "]
+_00D140C0:<_l_00D14080>->_00D14080
+_00D140C0:<_r_00D14200>->_00D14200
+_00D14040[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D14040 | type = OP | value = ; | { <_l_00D14000> left = 00D14000 | <_r_00D140C0> right = 00D140C0 }} "]
+_00D14040:<_l_00D14000>->_00D14000
+_00D14040:<_r_00D140C0>->_00D140C0
 }
 }

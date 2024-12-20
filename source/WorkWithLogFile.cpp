@@ -79,11 +79,18 @@ ErrorNumbers treeDump(FILE* log_file, Node* root, const char* func_name, Node* n
 
     if(root->type == NUM)
     {
-        fprintf(log_file, "root->value = %lf; [%p]\n", root->value.numeral, &root->value.numeral);
+        fprintf(log_file, "root->value = %lg; [%p]\n", root->value.numeral, &root->value.numeral);
     }
     else if(root->type == ID)
     {
-        fprintf(log_file, "root->value = %.3s; [%p]\n", root->value.id_info.id, &root->value.id_info.id);
+        fprintf(log_file, "type = VAR | value = ");
+        for(int i = 0; i < root->value.id_info.length; i++)
+        {
+            fprintf(log_file, "%c", root->value.id_info.id[i]);
+        }
+
+        fprintf(log_file, " | lenght = %d | number = %d | ",
+                root->value.id_info.length, root->value.id_info.number);
     }
     else if(root->type == OP)
     {
@@ -212,7 +219,7 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
     {
         case NUM:
         {
-            fprintf(file_to_write, "type = NUM | value = %.2lf | ", node->value.numeral);
+            fprintf(file_to_write, "type = NUM | value = %lg | ", node->value.numeral);
             break;
         }
         case ID:
@@ -222,6 +229,7 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
             {
                 fprintf(file_to_write, "%c", node->value.id_info.id[i]);
             }
+
             fprintf(file_to_write, " | lenght = %d | number = %d | ",
                     node->value.id_info.length, node->value.id_info.number);
             break;
@@ -272,7 +280,17 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
                     fprintf(file_to_write, "value = ) | ");
                     break;
                 }
+                case EQUAL:
+                {
+                    fprintf(file_to_write, "value = = | ");
+                    break;
+                }
                 case EOP:
+                {
+                    fprintf(file_to_write, "value = ; | ");
+                    break;
+                }
+                case END:
                 {
                     fprintf(file_to_write, "value = $ | ");
                     break;

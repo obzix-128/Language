@@ -8,16 +8,86 @@ ReturnValue recursiveDescent(TokensInfo* array_of_tokens)
     int pointer = 0;
 
     ReturnValue value = {};
-    CHECK_RETURN_VALUE(value, getExpression(array_of_tokens, &pointer));
+
+    CHECK_RETURN_VALUE(value, getOperation(array_of_tokens, &pointer));
 
     if(array_of_tokens->address[pointer].value.operation != '$')
     {
+        fprintf(stderr, "Not detected $\n");
         value.error = SYNTAX_ERROR;
         return value;
     }
 
     pointer++;
     return value;
+}
+
+ReturnValue getOperation(TokensInfo* array_of_tokens, int* pointer)
+{
+    CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
+
+    ReturnValue value         = {};
+    ReturnValue assignment    = {};
+    ReturnValue next_operator = {};
+
+    if(*pointer < array_of_tokens->size - 1)
+    {
+        CHECK_RETURN_VALUE(assignment, getAssignment(array_of_tokens, pointer));
+
+        if(array_of_tokens->address[*pointer].value.operation == ';')
+        {
+            value.node = &(array_of_tokens->address[*pointer]);
+            (*pointer)++;
+
+            CHECK_RETURN_VALUE(next_operator, getOperation(array_of_tokens, pointer));
+
+            value.node->left  = assignment.node;
+            value.node->right = next_operator.node;
+        }
+        else
+        {
+            fprintf(stderr, "the ';' character was expected, but the '%c' character was received\n",
+                    array_of_tokens->address[*pointer].value.operation                               );
+            value.error = SYNTAX_ERROR;
+            return value;
+        }
+    }
+
+    return value;
+}
+
+ReturnValue getAssignment(TokensInfo* array_of_tokens, int* pointer)
+{
+    CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
+
+    ReturnValue result = {};
+
+    ReturnValue l_value = {};
+    ReturnValue r_value = {};
+    CHECK_RETURN_VALUE(l_value, getVariable(array_of_tokens, pointer));
+
+    if(array_of_tokens->address[*pointer].type == OP &&
+       array_of_tokens->address[*pointer].value.operation == '=')
+    {
+        array_of_tokens->address[*pointer].left = l_value.node;
+        result.node = &(array_of_tokens->address[*pointer]);
+        (*pointer)++;
+
+        CHECK_RETURN_VALUE(r_value, getExpression(array_of_tokens, pointer));
+        result.node->right = r_value.node;
+    }
+    else
+    {
+        fprintf(stderr, "the '=' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
+        result.error = SYNTAX_ERROR;
+        return result;
+    }
+
+
+    return result;
 }
 
 ReturnValue getExpression(TokensInfo* array_of_tokens, int* pointer)
@@ -115,6 +185,8 @@ ReturnValue getPrimaryExpression(TokensInfo* array_of_tokens, int* pointer)
         if(array_of_tokens->address[*pointer].type != OP ||
            array_of_tokens->address[*pointer].value.operation != ')')
         {
+            fprintf(stderr, "the ')' character was expected, but the '%c' character was received\n",
+                    array_of_tokens->address[*pointer].value.operation                               );
             value.error = SYNTAX_ERROR;
             return value;
         }
@@ -171,6 +243,8 @@ ReturnValue getFuncWithOneArg(TokensInfo* array_of_tokens, int* pointer)
     if(array_of_tokens->address[*pointer].type != OP ||
        array_of_tokens->address[*pointer].value.operation != '(')
     {
+        fprintf(stderr, "the '(' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
         value.error = SYNTAX_ERROR;
         return value;
     }
@@ -183,6 +257,8 @@ ReturnValue getFuncWithOneArg(TokensInfo* array_of_tokens, int* pointer)
     if(array_of_tokens->address[*pointer].type != OP ||
        array_of_tokens->address[*pointer].value.operation != ')')
     {
+        fprintf(stderr, "the ')' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
         value.error = SYNTAX_ERROR;
         return value;
     }

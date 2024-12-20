@@ -17,11 +17,12 @@ struct ReturnValue
 };
 
 ReturnValue recursiveDescent    (TokensInfo* array_of_tokens);
+ReturnValue getOperation        (TokensInfo* array_of_tokens, int* pointer);
+ReturnValue getAssignment       (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getExpression       (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getTerm             (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getPower            (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getPrimaryExpression(TokensInfo* array_of_tokens, int* pointer);
-ReturnValue getFuncWithTwoArg   (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getFuncWithOneArg   (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getVariable         (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getNumeral          (TokensInfo* array_of_tokens, int* pointer);

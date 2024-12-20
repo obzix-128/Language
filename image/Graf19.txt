@@ -2,6 +2,6 @@ digraph
 {
 rankdir = TB;
 {
-_00920F50[shape = record, style = "filled" fillcolor = "#bba0ff", label = " { address = 00920F50 | type = VAR | value = x | lenght = 1 | number = 1 | { left = NULL | right = NULL }} "]
+_00D10F58[shape = record, style = "filled" fillcolor = "#ffee80", label = " { address = 00D10F58 | type = OP | value = ^ | { left = NULL | right = NULL }} "]
 }
 }

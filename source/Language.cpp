@@ -27,12 +27,6 @@ int main(const int argc, const char** argv)
 
     CHECK_ERROR(check_error, lexicalAnalysis(log_file, &program, &array_of_tokens, &table));
 
-    for(int i = 0; i < array_of_tokens.size; i++)
-    {
-        CHECK_ERROR(check_error, treeDump(log_file, &(array_of_tokens.address[i]),
-                                          __PRETTY_FUNCTION__, NULL               ));
-    }
-
     ReturnValue value = recursiveDescent(&array_of_tokens);
     if(value.error != NO_ERROR)
     {
