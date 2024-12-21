@@ -2,6 +2,7 @@
 #include "RecursiveDescent.h"
 #include "LexicalAnalysis.h"
 #include "WriteAssemblerCode.h"
+// TODO: проверка на инициализацию переменных
 
 
 int main(const int argc, const char** argv)

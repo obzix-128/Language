@@ -57,6 +57,15 @@ ReturnValue getOperation(TokensInfo* array_of_tokens, int* pointer)
         return value;
     }
 
+    CHECK_RETURN_VALUE(l_branch, getWhile(array_of_tokens, pointer));
+    if(l_branch.node != NULL)
+    {
+        CHECK_RETURN_VALUE(value, checkSemicolon(array_of_tokens, pointer));
+
+        value.node->left = l_branch.node;
+        return value;
+    }
+
     if(array_of_tokens->address[*pointer].value.operation != '{')
     {
         return value;
@@ -119,6 +128,52 @@ ReturnValue checkSemicolon(TokensInfo* array_of_tokens, int* pointer)
     (*pointer)++;
 
     return value;
+}
+
+ReturnValue getWhile(TokensInfo* array_of_tokens, int* pointer)
+{
+    CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
+
+    ReturnValue result = {};
+
+    if(array_of_tokens->address[*pointer].type != OP ||
+       array_of_tokens->address[*pointer].value.operation != 'w')
+    {
+        return result;
+    }
+
+    result.node = &(array_of_tokens->address[*pointer]);
+    (*pointer)++;
+
+    if(array_of_tokens->address[*pointer].type != OP ||
+       array_of_tokens->address[*pointer].value.operation != '(')
+    {
+        fprintf(stderr, "the '(' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
+        result.error = SYNTAX_ERROR;
+        return result;
+    }
+    (*pointer)++;
+
+    ReturnValue condition = getExpression(array_of_tokens, pointer);
+
+    result.node->left = condition.node;
+
+    if(array_of_tokens->address[*pointer].type != OP ||
+       array_of_tokens->address[*pointer].value.operation != ')')
+    {
+        fprintf(stderr, "the ')' character was expected, but the '%c' character was received\n",
+                array_of_tokens->address[*pointer].value.operation                               );
+        result.error = SYNTAX_ERROR;
+        return result;
+    }
+    (*pointer)++;
+
+    ReturnValue body = getOperation(array_of_tokens, pointer);
+    result.node->right = body.node;
+
+    return result;
 }
 
 ReturnValue getIf(TokensInfo* array_of_tokens, int* pointer)

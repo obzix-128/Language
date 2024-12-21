@@ -126,6 +126,12 @@ ErrorNumbers findKeyword(FILE* log_file, TokensInfo* array_of_tokens, IdTableInf
                 array_of_tokens->address[i].type            = OP;
                 array_of_tokens->address[i].value.operation = IF;
             }
+            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "while", 5)) &&
+                    array_of_tokens->address[i].value.id_info.length == 5                      )
+            {
+                array_of_tokens->address[i].type            = OP;
+                array_of_tokens->address[i].value.operation = WHILE;
+            }
             else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, ";", 1)) &&
                     array_of_tokens->address[i].value.id_info.length == 1                  )
             {

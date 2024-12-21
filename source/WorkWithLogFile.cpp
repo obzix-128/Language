@@ -280,6 +280,11 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
                     fprintf(file_to_write, "value = 'if' | ");
                     break;
                 }
+                case WHILE:
+                {
+                    fprintf(file_to_write, "value = 'while' | ");
+                    break;
+                }
                 case L_SK:
                 {
                     fprintf(file_to_write, "value = '(' | ");

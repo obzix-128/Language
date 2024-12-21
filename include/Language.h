@@ -35,6 +35,7 @@ enum Operations
     EQUAL  = '=',
     PRINTF = 'p',
     IF     = 'i',
+    WHILE  = 'w',
     EOP    = ';',
     END    = '$'
 };

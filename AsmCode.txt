@@ -1,43 +1,31 @@
 
 ; begining of assignment
-push 1
+push 2
 pop [0] ; x
 ; begining of assignment
 ; EOP
 
-; begining of assignment
-push 34
-pop [1] ; y
-; begining of assignment
-; EOP
+; begining of while
+begining_while_0:
+push [0] ; x
+push 0
+je end_while_0:
 
 ; begining of assignment
-push [3] ; z
-push [1] ; y
-add
-push 15
-push 2
-pow
-mul
-pop [2] ; abc
-; begining of assignment
-; EOP
-
-; begining of if
 push [0] ; x
 push 1
 sub
-push 0
-je end_if:
+pop [0] ; x
+; begining of assignment
+; EOP
 
 ; begining of printf
-push [2] ; abc
-push 7
-add
+push [0] ; x
 out
 ; end of printf
 ; EOP
-end_if:
-; end of if
+jmp begining_while_0:
+end_while_0:
+; end of while
 ; EOP
 hlt
