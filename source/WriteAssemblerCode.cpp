@@ -88,6 +88,94 @@ ErrorNumbers writeOperation(FILE* log_file, FILE* file_to_write, Node* node)
             fprintf(file_to_write, "pow\n");
             break;
         }
+        case JA:
+        {
+            fprintf(file_to_write, "\n; begining of '>'\n");
+
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left ));
+
+            fprintf(file_to_write, "jb ja_%d:\n", counter);
+            fprintf(file_to_write, "push 0\n");
+            fprintf(file_to_write, "jmp end_ja_%d:\n", counter);
+
+            fprintf(file_to_write, "ja_%d:\n", counter);
+            fprintf(file_to_write, "push 1\n");
+
+            fprintf(file_to_write, "end_ja_%d:\n", counter);
+
+            fprintf(file_to_write, "\n; end of '>'\n");
+
+            counter += 1;
+
+            break;
+        }
+        case JB:
+        {
+            fprintf(file_to_write, "\n; begining of '<'\n");
+
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left ));
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
+
+            fprintf(file_to_write, "jb jb_%d:\n", counter);
+            fprintf(file_to_write, "push 0\n");
+            fprintf(file_to_write, "jmp end_jb_%d:\n", counter);
+
+            fprintf(file_to_write, "jb_%d:\n", counter);
+            fprintf(file_to_write, "push 1\n");
+
+            fprintf(file_to_write, "end_jb_%d:\n", counter);
+
+            fprintf(file_to_write, "\n; end of '<'\n");
+
+            counter += 1;
+
+            break;
+        }
+        case JAE:
+        {
+            fprintf(file_to_write, "\n; begining of '>='\n");
+
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left ));
+
+            fprintf(file_to_write, "jbe jae_%d:\n", counter);
+            fprintf(file_to_write, "push 0\n");
+            fprintf(file_to_write, "jmp end_jae_%d:\n", counter);
+
+            fprintf(file_to_write, "jae_%d:\n", counter);
+            fprintf(file_to_write, "push 1\n");
+
+            fprintf(file_to_write, "end_jae_%d:\n", counter);
+
+            fprintf(file_to_write, "\n; end of '>='\n");
+
+            counter += 1;
+
+            break;
+        }
+        case JBE:
+        {
+            fprintf(file_to_write, "\n; begining of '<='\n");
+
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left ));
+            CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
+
+            fprintf(file_to_write, "jbe jbe_%d:\n", counter);
+            fprintf(file_to_write, "push 0\n");
+            fprintf(file_to_write, "jmp end_jbe_%d:\n", counter);
+
+            fprintf(file_to_write, "jbe_%d:\n", counter);
+            fprintf(file_to_write, "push 1\n");
+
+            fprintf(file_to_write, "end_jbe_%d:\n", counter);
+
+            fprintf(file_to_write, "\n; end of '<='\n");
+
+            counter += 1;
+
+            break;
+        }
         case COS:
         {
             CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left));
@@ -112,7 +200,7 @@ ErrorNumbers writeOperation(FILE* log_file, FILE* file_to_write, Node* node)
             {
                 fprintf(file_to_write, "%c", node->left->value.id_info.id[i]);
             }
-            fprintf(file_to_write, "\n; begining of assignment\n");
+            fprintf(file_to_write, "\n; end of assignment\n");
 
             break;
         }
@@ -129,41 +217,43 @@ ErrorNumbers writeOperation(FILE* log_file, FILE* file_to_write, Node* node)
         }
         case IF:
         {
+            int number = counter;
+            counter += 1;
+
             fprintf(file_to_write, "\n; begining of if\n");
 
             CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left));
 
             fprintf(file_to_write, "push 0\n");
-            fprintf(file_to_write, "je end_if_%d:\n", counter);
+            fprintf(file_to_write, "je end_if_%d:\n", number);
 
             CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
 
-            fprintf(file_to_write, "end_if_%d:\n", counter);
+            fprintf(file_to_write, "end_if_%d:\n", number);
             fprintf(file_to_write, "; end of if\n");
-
-            counter += 1;
 
             break;
         }
         case WHILE:
         {
+            int number = counter;
+            counter += 1;
+
             fprintf(file_to_write, "\n; begining of while\n");
 
-            fprintf(file_to_write, "begining_while_%d:\n", counter);
+            fprintf(file_to_write, "begining_while_%d:\n", number);
 
             CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->left));
 
             fprintf(file_to_write, "push 0\n");
-            fprintf(file_to_write, "je end_while_%d:\n", counter);
+            fprintf(file_to_write, "je end_while_%d:\n", number);
 
             CHECK_ERROR(check_error, writeAssemblerCode(log_file, file_to_write, node->right));
 
-            fprintf(file_to_write, "jmp begining_while_%d:\n", counter);
+            fprintf(file_to_write, "jmp begining_while_%d:\n", number);
 
-            fprintf(file_to_write, "end_while_%d:\n", counter);
+            fprintf(file_to_write, "end_while_%d:\n", number);
             fprintf(file_to_write, "; end of while\n");
-
-            counter += 1;
 
             break;
         }

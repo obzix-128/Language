@@ -22,6 +22,7 @@ ReturnValue checkSemicolon      (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getIf               (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getWhile            (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getAssignment       (TokensInfo* array_of_tokens, int* pointer);
+ReturnValue getComparsion       (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getExpression       (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getTerm             (TokensInfo* array_of_tokens, int* pointer);
 ReturnValue getPower            (TokensInfo* array_of_tokens, int* pointer);

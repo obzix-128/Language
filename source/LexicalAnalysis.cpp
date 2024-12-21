@@ -12,7 +12,9 @@ ErrorNumbers lexicalAnalysis(FILE* log_file, BufferInfo* program, TokensInfo* ar
 
     ErrorNumbers check_error = NO_ERROR;
 
-    CHECK_ERROR(check_error, arrayOfTokensCtor(log_file, array_of_tokens))
+    CHECK_ERROR(check_error, arrayOfTokensCtor(log_file, array_of_tokens));
+    CHECK_ERROR(check_error, tableOfIdCtor    (log_file, table          ));
+
     CHECK_ERROR(check_error, skipSpaces(program));
 
     while(program->buffer[program->pointer] != '$')
@@ -23,134 +25,12 @@ ErrorNumbers lexicalAnalysis(FILE* log_file, BufferInfo* program, TokensInfo* ar
         }
         else
         {
-            CHECK_ERROR(check_error, getId(log_file, program, array_of_tokens));
+            CHECK_ERROR(check_error, getId(log_file, program, array_of_tokens, table));
         }
         CHECK_ERROR(check_error, skipSpaces(program));
     }
 
-    CHECK_ERROR(check_error, getId(log_file, program, array_of_tokens));
-
-    CHECK_ERROR(check_error, findKeyword(log_file, array_of_tokens, table))
-
-    return check_error;
-}
-
-ErrorNumbers findKeyword(FILE* log_file, TokensInfo* array_of_tokens, IdTableInfo* table)
-{
-    CHECK_NULL_ADDR_ERROR(log_file,        NULL_ADDRESS_ERROR);
-    CHECK_NULL_ADDR_ERROR(array_of_tokens, NULL_ADDRESS_ERROR);
-
-    ErrorNumbers check_error = NO_ERROR;
-
-    CHECK_ERROR(check_error, tableOfIdCtor(log_file, table))
-
-    for(int i = 0; i < array_of_tokens->size; i++) // TODO: new func
-    {
-        if(array_of_tokens->address[i].type == ID)
-        {
-            if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "+", 1)) &&
-               array_of_tokens->address[i].value.id_info.length == 1                  ) // TODO? const
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = ADD;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "-", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = SUB;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "*", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = MUL;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "/", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = DIV;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "^", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = POW;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "cos", 3)) &&
-                    array_of_tokens->address[i].value.id_info.length == 3                    )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = COS;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "(", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = L_SK;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, ")", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = R_SK;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "{", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = LF_SK;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "}", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = RF_SK;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "=", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = EQUAL;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "printf", 6)) &&
-                    array_of_tokens->address[i].value.id_info.length == 6                       )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = PRINTF;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "if", 2)) &&
-                    array_of_tokens->address[i].value.id_info.length == 2                   )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = IF;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "while", 5)) &&
-                    array_of_tokens->address[i].value.id_info.length == 5                      )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = WHILE;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, ";", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = EOP;
-            }
-            else if((0 == strncmp(array_of_tokens->address[i].value.id_info.id, "$", 1)) &&
-                    array_of_tokens->address[i].value.id_info.length == 1                  )
-            {
-                array_of_tokens->address[i].type            = OP;
-                array_of_tokens->address[i].value.operation = END;
-            }
-            else
-            {
-                CHECK_ERROR(check_error, insertIntoTableOfId(log_file,
-                                                             &(array_of_tokens->address[i]), table));
-            }
-        }
-    }
+    CHECK_ERROR(check_error, getId(log_file, program, array_of_tokens, table));
 
     return check_error;
 }
@@ -281,11 +161,13 @@ ErrorNumbers getNumeral(FILE* log_file, BufferInfo* program, TokensInfo* array_o
     return NO_ERROR;
 }
 
-ErrorNumbers getId(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tokens)
+ErrorNumbers getId(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tokens,
+                   IdTableInfo* table)
 {
     CHECK_NULL_ADDR_ERROR(log_file,        NULL_ADDRESS_ERROR);
     CHECK_NULL_ADDR_ERROR(program,         NULL_ADDRESS_ERROR);
     CHECK_NULL_ADDR_ERROR(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(table,           NULL_ADDRESS_ERROR);
 
     ErrorNumbers check_error = NO_ERROR;
 
@@ -301,11 +183,7 @@ ErrorNumbers getId(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tok
 
     if(isalnum(program->buffer[program->pointer]))
     {
-        while(isalnum(program->buffer[program->pointer]) || program->buffer[program->pointer] == '_')
-        {
-            array_of_tokens->address[array_of_tokens->size].value.id_info.length += 1;
-            program->pointer += 1;
-        }
+        CHECK_ERROR(check_error, findVerbKeyword(log_file, program, array_of_tokens, table))
     }
     else if(program->buffer[program->pointer]     == '/' &&
             program->buffer[program->pointer + 1] == '*'   )
@@ -320,8 +198,7 @@ ErrorNumbers getId(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tok
     }
     else if(ispunct(program->buffer[program->pointer]))
     {
-        array_of_tokens->address[array_of_tokens->size].value.id_info.length += 1;
-        program->pointer += 1;
+        CHECK_ERROR(check_error, findPunctKeyword(log_file, program, array_of_tokens, table))
     }
     else
     {
@@ -334,4 +211,166 @@ ErrorNumbers getId(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tok
     array_of_tokens->size += 1;
 
     return NO_ERROR;
+}
+
+
+ErrorNumbers findPunctKeyword(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tokens,
+                             IdTableInfo* table)
+{
+    CHECK_NULL_ADDR_ERROR(log_file,        NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(program,         NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(table,           NULL_ADDRESS_ERROR);
+
+    ErrorNumbers check_error = NO_ERROR;
+
+    array_of_tokens->address[array_of_tokens->size].value.id_info.id =
+    &(program->buffer[program->pointer]);
+
+    array_of_tokens->address[array_of_tokens->size].value.id_info.length = 1;
+    program->pointer += 1;
+
+    array_of_tokens->address[array_of_tokens->size].type = OP;
+
+    if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '+')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = ADD;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '-')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = SUB;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '*')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = MUL;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '/')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = DIV;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '^')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = POW;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '>')
+    {
+        if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[1] == '=')
+        {
+            array_of_tokens->address[array_of_tokens->size].value.operation = JAE;
+            program->pointer += 1;
+        }
+        else
+        {
+            array_of_tokens->address[array_of_tokens->size].value.operation = JA;
+        }
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '<')
+    {
+        if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[1] == '=')
+        {
+            array_of_tokens->address[array_of_tokens->size].value.operation = JBE;
+            program->pointer += 1;
+        }
+        else
+        {
+            array_of_tokens->address[array_of_tokens->size].value.operation = JB;
+        }
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '(')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = L_SK;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == ')')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = R_SK;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '{')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = LF_SK;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '}')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = RF_SK;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '=')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = EQUAL;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == ';')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = EOP;
+    }
+    else if(array_of_tokens->address[array_of_tokens->size].value.id_info.id[0] == '$')
+    {
+        array_of_tokens->address[array_of_tokens->size].value.operation = END;
+    }
+    else
+    {
+        fprintf(stderr, "Invalid character = '%c'\n",
+                array_of_tokens->address[array_of_tokens->size].value.id_info.id[0]);
+        check_error = SYNTAX_ERROR;
+        return check_error;
+    }
+
+    return check_error;
+}
+
+ErrorNumbers findVerbKeyword(FILE* log_file, BufferInfo* program, TokensInfo* array_of_tokens,
+                             IdTableInfo* table)
+{
+    CHECK_NULL_ADDR_ERROR(log_file,        NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(program,         NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_ERROR(table,           NULL_ADDRESS_ERROR);
+
+    ErrorNumbers check_error = NO_ERROR;
+
+    array_of_tokens->address[array_of_tokens->size].value.id_info.id =
+    &(program->buffer[program->pointer]);
+
+    array_of_tokens->address[array_of_tokens->size].value.id_info.length = 0;
+
+    while(isalnum(program->buffer[program->pointer]) ||
+          program->buffer[program->pointer] == '_'     )
+    {
+        program->pointer++;
+        array_of_tokens->address[array_of_tokens->size].value.id_info.length++;
+    }
+
+    if((0 == strncmp(array_of_tokens->address[array_of_tokens->size].value.id_info.id,
+                     "cos", 3                                                         )) &&
+       array_of_tokens->address[array_of_tokens->size].value.id_info.length == 3           )
+    {
+        array_of_tokens->address[array_of_tokens->size].type            = OP;
+        array_of_tokens->address[array_of_tokens->size].value.operation = COS;
+    }
+    else if((0 == strncmp(array_of_tokens->address[array_of_tokens->size].value.id_info.id,
+                          "printf", 6                                                      )) &&
+            array_of_tokens->address[array_of_tokens->size].value.id_info.length == 6           )
+    {
+        array_of_tokens->address[array_of_tokens->size].type            = OP;
+        array_of_tokens->address[array_of_tokens->size].value.operation = PRINTF;
+    }
+    else if((0 == strncmp(array_of_tokens->address[array_of_tokens->size].value.id_info.id,
+                          "if", 2                                                          )) &&
+            array_of_tokens->address[array_of_tokens->size].value.id_info.length == 2           )
+    {
+        array_of_tokens->address[array_of_tokens->size].type            = OP;
+        array_of_tokens->address[array_of_tokens->size].value.operation = IF;
+    }
+    else if((0 == strncmp(array_of_tokens->address[array_of_tokens->size].value.id_info.id,
+                          "while", 5                                                       )) &&
+            array_of_tokens->address[array_of_tokens->size].value.id_info.length == 5)
+    {
+        array_of_tokens->address[array_of_tokens->size].type            = OP;
+        array_of_tokens->address[array_of_tokens->size].value.operation = WHILE;
+    }
+    else
+    {
+        CHECK_ERROR(check_error,
+                    insertIntoTableOfId(log_file,
+                                        &(array_of_tokens->address[array_of_tokens->size]), table));
+    }
+
+    return check_error;
 }

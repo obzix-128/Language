@@ -1,28 +1,39 @@
 
 ; begining of assignment
-push 2
+push 9
 pop [0] ; x
-; begining of assignment
+; end of assignment
 ; EOP
 
 ; begining of while
 begining_while_0:
+
+; begining of '>'
+push 3
 push [0] ; x
+jb ja_1:
+push 0
+jmp end_ja_1:
+ja_1:
+push 1
+end_ja_1:
+
+; end of '>'
 push 0
 je end_while_0:
+
+; begining of printf
+push [0] ; x
+out
+; end of printf
+; EOP
 
 ; begining of assignment
 push [0] ; x
 push 1
 sub
 pop [0] ; x
-; begining of assignment
-; EOP
-
-; begining of printf
-push [0] ; x
-out
-; end of printf
+; end of assignment
 ; EOP
 jmp begining_while_0:
 end_while_0:

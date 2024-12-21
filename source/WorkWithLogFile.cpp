@@ -265,6 +265,26 @@ ErrorNumbers buildAllNodes(Node* node, FILE* file_to_write, Node* new_node)
                     fprintf(file_to_write, "value = '^' | ");
                     break;
                 }
+                case JA:
+                {
+                    fprintf(file_to_write, "value = 'ja' | ");
+                    break;
+                }
+                case JB:
+                {
+                    fprintf(file_to_write, "value = 'jb' | ");
+                    break;
+                }
+                case JAE:
+                {
+                    fprintf(file_to_write, "value = 'jae' | ");
+                    break;
+                }
+                case JBE:
+                {
+                    fprintf(file_to_write, "value = 'jbe' | ");
+                    break;
+                }
                 case COS:
                 {
                     fprintf(file_to_write, "value = 'cos' | ");

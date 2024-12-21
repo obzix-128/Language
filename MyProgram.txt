@@ -1,8 +1,8 @@
 {
-    x = 2;
-    while(x)
+    x = 9;
+    while(x > 3)
     {
-        x = x - 1;
         printf(x);
+        x = x - 1;
     };
 }$

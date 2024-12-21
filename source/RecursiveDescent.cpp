@@ -156,7 +156,7 @@ ReturnValue getWhile(TokensInfo* array_of_tokens, int* pointer)
     }
     (*pointer)++;
 
-    ReturnValue condition = getExpression(array_of_tokens, pointer);
+    ReturnValue condition = getComparsion(array_of_tokens, pointer);
 
     result.node->left = condition.node;
 
@@ -202,7 +202,7 @@ ReturnValue getIf(TokensInfo* array_of_tokens, int* pointer)
     }
     (*pointer)++;
 
-    ReturnValue condition = getExpression(array_of_tokens, pointer);
+    ReturnValue condition = getComparsion(array_of_tokens, pointer);
 
     result.node->left = condition.node;
 
@@ -246,7 +246,7 @@ ReturnValue getAssignment(TokensInfo* array_of_tokens, int* pointer)
         result.node = &(array_of_tokens->address[*pointer]);
         (*pointer)++;
 
-        CHECK_RETURN_VALUE(r_value, getExpression(array_of_tokens, pointer));
+        CHECK_RETURN_VALUE(r_value, getComparsion(array_of_tokens, pointer));
         result.node->right = r_value.node;
     }
     else
@@ -256,6 +256,37 @@ ReturnValue getAssignment(TokensInfo* array_of_tokens, int* pointer)
     }
 
     return result;
+}
+
+ReturnValue getComparsion(TokensInfo* array_of_tokens, int* pointer)
+{
+    CHECK_NULL_ADDR_RET_VAL(array_of_tokens, NULL_ADDRESS_ERROR);
+    CHECK_NULL_ADDR_RET_VAL(pointer,         NULL_ADDRESS_ERROR);
+
+    ReturnValue value = {};
+    CHECK_RETURN_VALUE(value, getExpression(array_of_tokens, pointer));
+
+    while( array_of_tokens->address[*pointer].type == OP &&               //TODO? стоит ли делать такой пробельчик?
+          (array_of_tokens->address[*pointer].value.operation == '>' ||
+           array_of_tokens->address[*pointer].value.operation == '<' ||
+           array_of_tokens->address[*pointer].value.operation == 'a' ||
+           array_of_tokens->address[*pointer].value.operation == 'b'   ))
+    {
+        array_of_tokens->address[*pointer].left = value.node;
+        value.node = &(array_of_tokens->address[*pointer]);
+        (*pointer)++;
+
+        ReturnValue value_two = {};
+        CHECK_RETURN_VALUE(value_two, getExpression(array_of_tokens, pointer));
+        if(value_two.error != NO_ERROR)
+        {
+            return value_two;
+        }
+
+        value.node->right = value_two.node;
+    }
+
+    return value;
 }
 
 ReturnValue getExpression(TokensInfo* array_of_tokens, int* pointer)
@@ -348,7 +379,7 @@ ReturnValue getPrimaryExpression(TokensInfo* array_of_tokens, int* pointer)
     {
         (*pointer)++;
 
-        CHECK_RETURN_VALUE(value, getExpression(array_of_tokens, pointer));
+        CHECK_RETURN_VALUE(value, getComparsion(array_of_tokens, pointer));
 
         if(array_of_tokens->address[*pointer].type != OP ||
            array_of_tokens->address[*pointer].value.operation != ')')
@@ -424,7 +455,7 @@ ReturnValue getFuncWithOneArg(TokensInfo* array_of_tokens, int* pointer)
     }
     (*pointer)++;
 
-    ReturnValue value_two = getExpression(array_of_tokens, pointer);
+    ReturnValue value_two = getComparsion(array_of_tokens, pointer);
 
     value.node->left = value_two.node;
 
