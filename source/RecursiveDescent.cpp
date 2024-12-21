@@ -9,13 +9,9 @@ ReturnValue recursiveDescent(TokensInfo* array_of_tokens)
 
     ReturnValue value = {};
 
-    CHECK_RETURN_VALUE(value, getOperation(array_of_tokens, &pointer));
-
-    if(array_of_tokens->address[pointer].value.operation != '$')
+    while(array_of_tokens->address[pointer].value.operation != '$')
     {
-        fprintf(stderr, "Not detected $\n");
-        value.error = SYNTAX_ERROR;
-        return value;
+        CHECK_RETURN_VALUE(value, getOperation(array_of_tokens, &pointer));
     }
 
     pointer++;

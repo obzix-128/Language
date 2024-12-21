@@ -2,12 +2,12 @@
 #include "RecursiveDescent.h"
 #include "LexicalAnalysis.h"
 #include "WriteAssemblerCode.h"
-// TODO: проверка на инициализацию переменных
+#include "ReadAndWrite.h"
 
 
 int main(const int argc, const char** argv)
 {
-    const int _NUMBERS_OF_ARGUMENTS = 4;
+    const int _NUMBERS_OF_ARGUMENTS = 5;
     if(argc != _NUMBERS_OF_ARGUMENTS)
     {
         errorHandler(NUMBER_OF_ARG_ERROR, __PRETTY_FUNCTION__);
@@ -42,8 +42,16 @@ int main(const int argc, const char** argv)
     FILE* asm_code_file = NULL;
     CHECK_ERROR(check_error, openFile(&asm_code_file, argv[3], OPEN_FILE_IN_RECORDING_MODE));
 
-    CHECK_ERROR(check_error, writeAssemblerCode(log_file, asm_code_file, value.node));
+    CHECK_ERROR(check_error, writeAssemblerCode(log_file, asm_code_file, value.node)); // TODO: внести внутрь hlt
     fprintf(asm_code_file, "hlt\n");
+
+    FILE* file_with_tree = NULL;
+    CHECK_ERROR(check_error, openFile(&file_with_tree, argv[4], OPEN_FILE_IN_RECORDING_MODE));
+    
+    CHECK_ERROR(check_error, treeDump(log_file, value.node, __PRETTY_FUNCTION__, NULL));
+
+    CHECK_ERROR(check_error, treeWrite(log_file, file_with_tree, value.node));
+    fclose(file_with_tree);
 
     CHECK_ERROR(check_error, treeDtor(log_file, value.node));
 
